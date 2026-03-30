@@ -1,0 +1,31 @@
+
+
+body{
+    display: flex;
+    justify-content: space-between;
+}
+
+.box{
+    width: 250px;
+    height: 250px;
+    border: 3 solid;
+}
+.box01{
+    background-color: rgb(201, 164, 42);
+}
+
+.box02{
+    background-color: rgb(95, 43, 116);
+}
+
+.box03{
+    background-color: rgb(23, 102, 33);
+}
+
+.box04{
+    background-color: rgb(105, 29, 15);
+}
+
+.box05{
+    background-color: rgb(163, 173, 16);
+}

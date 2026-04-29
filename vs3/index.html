@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="icon/fav.png" type="image/x-icon">
+    <title>Student Registration Form</title>
+</head>
+<body>
+
+    <h1>Student Registration Form</h1>
+
+    <form>
+
+        <label for="roll">Roll no. :</label>
+        <input type="number" id="roll" name="roll">
+        <br><br>
+
+        <label>Student Name :</label>
+        <input type="text" name="first_name" placeholder="First name"> -
+        <input type="text" name="last_name" placeholder="Last name">
+        <br><br>
+
+        <label>Father's Name :</label>
+        <input type="text" name="father_name" placeholder="Father's name">
+        <br><br>
+
+        <label>Date of Birth :</label>
+        <input type="date" name="dob">
+        <br><br>
+
+        <label>Phone number :</label>
+        <input type="text" value="+880" name="country_code">
+        <input type="number" name="phone">
+        <br><br>
+
+        <label>Email ID :</label>
+        <input type="email" name="email">
+        <br><br>
+
+        <label>Password :</label>
+        <input type="password" name="password">
+        <br><br>
+
+        <label>Gender :</label>
+        <input type="radio" name="gender" value="Male" checked> Male
+        <input type="radio" name="gender" value="Female"> Female
+        <br><br>
+
+        <label>Department :</label>
+        <input type="checkbox" name="department" value="CSE"> CSE
+        <input type="checkbox" name="department" value="IT"> IT
+        <input type="checkbox" name="department" value="ECE"> ECE
+        <input type="checkbox" name="department" value="CIVIL"> CIVIL
+        <input type="checkbox" name="department" value="MECH"> MECH
+        <br><br>
+
+        <label>Student Pic :</label>
+        <input type="file" name="student_pic">
+        <br><br>
+
+        <label>City :</label>
+        <input type="text" name="city">
+        <br><br>
+
+        <label>Course :</label>
+        <select name="course">
+            <option>---Select Current Course---</option>
+            <option>Web Design</option>
+            <option>GD</option>
+            <option>English</option>
+            <option>Bangla</option>
+        </select>
+        <br><br>
+
+        <label>Address :</label><br>
+        <textarea name="address" rows="5" cols="30"></textarea>
+        <br><br>
+
+        <button type="submit">Registration</button>
+        
+    </form>
+
+</body>
+</html>

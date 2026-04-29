@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="return test()">
+    <input type="text" id="user_name" placeholder="your name"><br><br>
+    <input type="email" id="user_email" placeholder="your email"><br><br>
+    <input type="number" id="user_number" placeholder="your number"><br><br>
+    <input type="text" id="user_address" placeholder="your address"><br><br>
+    <button type="submit">click</button> 
+</form>
+
+<script>
+function test() {
+    let a = document.getElementById('user_name').value.trim();
+    let b = document.getElementById('user_email').value.trim();
+    let c = document.getElementById('user_number').value.trim();
+    let d = document.getElementById('user_address').value.trim();
+
+    if (a === '') {
+        alert('Please enter your Name');
+        return false;
+    }
+    if (b === '') {
+        alert('Please enter your E-mail');
+        return false;
+    }
+    if (c === '') {
+        alert('Please enter your Number');
+        return false;
+    }
+    if (d === '') {
+        alert('Please enter your Address');
+        return false;
+    }
+
+    alert('Thank you');
+    return true;
+}
+</script>
+</body>
+</html>

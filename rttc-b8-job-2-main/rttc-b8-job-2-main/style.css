@@ -1,0 +1,7 @@
+.card-img-left{
+    overflow: hidden;
+}
+
+.img-zoom:hover{
+    transform: scale(2);
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="datetime"></p>
+   <script>
+     setInterval(() => {
+         document.getElementById('datetime').innerText =
+         new Date().toLocaleString('bn-BD', {
+             day: 'numeric',
+             month: 'long',
+             year: 'numeric'
+             });
+            }, 1000);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .calculator {
+            background: #1e1e2f;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            width: 340px;
+        }
+
+        /* ─── Display ─── */
+        .display {
+            background: #13131f;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            text-align: right;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .display .expression {
+            color: #888;
+            font-size: 16px;
+            min-height: 24px;
+            word-wrap: break-word;
+            margin-bottom: 6px;
+        }
+
+        .display .result {
+            color: #fff;
+            font-size: 36px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ─── Button Grid ─── */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:active {
+            transform: scale(0.93);
+        }
+
+        /* Number buttons */
+        .btn-num {
+            background: #2a2a3d;
+            color: #e0e0e0;
+        }
+        .btn-num:hover {
+            background: #353550;
+        }
+
+        /* Operator buttons */
+        .btn-op {
+            background: #3a2d7c;
+            color: #c4b5fd;
+        }
+        .btn-op:hover {
+            background: #4c3da6;
+        }
+
+        /* Function buttons (AC, DEL, %) */
+        .btn-func {
+            background: #2d2040;
+            color: #e879f9;
+        }
+        .btn-func:hover {
+            background: #3e2d58;
+        }
+
+        /* Equals button */
+        .btn-eq {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff;
+            grid-column: span 2;
+        }
+        .btn-eq:hover {
+            background: linear-gradient(135deg, #6d28d9, #9333ea);
+        }
+
+        /* Zero button */
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        /* Ripple effect */
+        button::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        button:active::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <!-- Display -->
+    <div class="display">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+        <button class="btn-func"  data-action="clear">AC</button>
+        <button class="btn-func"  data-action="delete">DEL</button>
+        <button class="btn-func"  data-action="percent">%</button>
+        <button class="btn-op"    data-action="operator" data-value="÷">÷</button>
+
+        <button class="btn-num" data-action="number" data-value="7">7</button>
+        <button class="btn-num" data-action="number" data-value="8">8</button>
+        <button class="btn-num" data-action="number" data-value="9">9</button>
+        <button class="btn-op"   data-action="operator" data-value="×">×</button>
+
+        <button class="btn-num" data-action="number" data-value="4">4</button>
+        <button class="btn-num" data-action="number" data-value="5">5</button>
+        <button class="btn-num" data-action="number" data-value="6">6</button>
+        <button class="btn-op"   data-action="operator" data-value="−">−</button>
+
+        <button class="btn-num" data-action="number" data-value="1">1</button>
+        <button class="btn-num" data-action="number" data-value="2">2</button>
+        <button class="btn-num" data-action="number" data-value="3">3</button>
+        <button class="btn-op"   data-action="operator" data-value="+">+</button>
+
+        <button class="btn-num btn-zero" data-action="number" data-value="0">0</button>
+        <button class="btn-num" data-action="decimal">.</button>
+        <button class="btn-eq"   data-action="calculate">=</button>
+    </div>
+</div>
+
+<script>
+    const expressionEl = document.getElementById('expression');
+    const resultEl     = document.getElementById('result');
+
+    let currentInput   = '0';
+    let previousInput  = '';
+    let operator       = null;
+    let shouldReset    = false;
+    let expressionText = '';
+
+    /* ─── Helper: format number for display ─── */
+    function formatDisplay(value) {
+        if (value === 'Error') return 'Error';
+        const num = parseFloat(value);
+        if (isNaN(num)) return '0';
+        // Show up to 12 significant digits
+        const str = num.toPrecision(12);
+        // Remove trailing zeros after decimal
+        return parseFloat(str).toString();
+    }
+
+    /* ─── Update display ─── */
+    function updateDisplay() {
+        resultEl.textContent = formatDisplay(currentInput);
+        expressionEl.textContent = expressionText;
+    }
+
+    /* ─── Input number ─── */
+    function inputNumber(num) {
+        if (currentInput === 'Error') currentInput = '0';
+        if (shouldReset) {
+            currentInput = num;
+            shouldReset = false;
+        } else {
+            if (currentInput === '0' && num !== '.') {
+                currentInput = num;
+            } else {
+                if (currentInput.replace(/[^0-9]/g, '').length >= 15) return;
+                currentInput += num;
+            }
+        }
+        updateDisplay();
+    }
+
+    /* ─── Input decimal ─── */
+    function inputDecimal() {
+        if (shouldReset) {
+            currentInput = '0.';
+            shouldReset = false;
+            updateDisplay();
+            return;
+        }
+        if (!currentInput.includes('.')) {
+            currentInput += '.';
+        }
+        updateDisplay();
+    }
+
+    /* ─── Choose operator ─── */
+    function chooseOperator(op) {
+        if (currentInput === 'Error') return;
+        if (operator && !shouldReset) {
+            calculate();
+        }
+        previousInput  = currentInput;
+        operator       = op;
+        expressionText = formatDisplay(previousInput) + ' ' + op;
+        shouldReset    = true;
+        updateDisplay();
+    }
+
+    /* ─── Calculate ─── */
+    function calculate() {
+        if (!operator || previousInput === '') return;
+
+        const prev = parseFloat(previousInput);
+        const curr = parseFloat(currentInput);
+        let result;
+
+        switch (operator) {
+            case '+': result = prev + curr; break;
+            case '−': result = prev - curr; break;
+            case '×': result = prev * curr; break;
+            case '÷':
+                if (curr === 0) {
+                    currentInput = 'Error';
+                    expressionText = '';
+                    operator = null;
+                    previousInput = '';
+                    shouldReset = true;
+                    updateDisplay();
+                    return;
+                }
+                result = prev / curr;
+                break;
+            default: return;
+        }
+
+        expressionText = formatDisplay(previousInput) + ' ' + operator + ' ' + formatDisplay(currentInput) + ' =';
+        currentInput   = result.toString();
+        operator       = null;
+        previousInput  = '';
+        shouldReset    = true;
+        updateDisplay();
+    }
+
+    /* ─── Percent ─── */
+    function percent() {
+        if (currentInput === 'Error') return;
+        currentInput = (parseFloat(currentInput) / 100).toString();
+        updateDisplay();
+    }
+
+    /* ─── Clear ─── */
+    function clearAll() {
+        currentInput   = '0';
+        previousInput  = '';
+        operator       = null;
+        shouldReset    = false;
+        expressionText = '';
+        updateDisplay();
+    }
+
+    /* ─── Delete last character ─── */
+    function deleteLast() {
+        if (currentInput === 'Error' || shouldReset) {
+            clearAll();
+            return;
+        }
+        currentInput = currentInput.slice(0, -1);
+        if (currentInput === '' || currentInput === '-') {
+            currentInput = '0';
+        }
+        updateDisplay();
+    }
+
+    /* ─── Event delegation on buttons ─── */
+    document.querySelector('.buttons').addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const value  = btn.dataset.value;
+
+        switch (action) {
+            case 'number':   inputNumber(value);   break;
+            case 'decimal':  inputDecimal();       break;
+            case 'operator': chooseOperator(value); break;
+            case 'calculate': calculate();          break;
+            case 'clear':    clearAll();            break;
+            case 'delete':   deleteLast();          break;
+            case 'percent':  percent();             break;
+        }
+    });
+</script>
+
+</body>
+</html>
